@@ -7,7 +7,7 @@ from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
 
 
-
+img_path = os.path.join(os.path.dirname(__file__), "asstes", "Ally_logo_mayo_2025.png")
 fecha_formateada = datetime.now().strftime("%d%m%Y")
 
 def generar_csv_reporte(df_final, auditor, modo):
@@ -118,7 +118,7 @@ def generar_pdf(df, auditor, puesto, sucursal, modo):
 
         # Logo
         try:
-            c.drawImage("asstes\Ally_logo_mayo_2025.png", width - 120, height - 100, width=80, preserveAspectRatio=True) #CAMBIAR UBICACION
+            c.drawImage(img_path, width - 120, height - 100, width=80, preserveAspectRatio=True) #CAMBIAR UBICACION
         except:
             pass
 
