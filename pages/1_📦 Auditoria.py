@@ -27,8 +27,8 @@ img_path = os.path.join(os.path.dirname(__file__), "asstes", "Ally_logo_mayo_202
 
 # Configuración de página y encabezado
 col_logo, col_title = st.columns([1, 6])
-with col_logo:
-    st.image(img_path, width=80)
+#with col_logo:
+    #st.image(img_path, width=80)
 with col_title:
     st.title("Auditoría de Inventario")
 
