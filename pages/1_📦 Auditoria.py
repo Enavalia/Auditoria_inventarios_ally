@@ -26,41 +26,29 @@ with st.sidebar:
 img_path = os.path.join(os.path.dirname(__file__), "asstes", "Ally_logo_mayo_2025.png")
 
 # Configuración de página y encabezado
-col_logo, col_title = st.columns([1, 6])
+#col_logo, col_title = st.columns([1, 6])
 #with col_logo:
     #st.image(img_path, width=80)
-with col_title:
-    st.title("Auditoría de Inventario")
+#with col_title:
+st.title("Auditoría de Inventario")
 
-# Validación de datos necesarios desde session_state
+# Validación de sesión
 if (
+    "registro_completado" not in st.session_state or not st.session_state.registro_completado or
+    "df_original" not in st.session_state or st.session_state.df_original is None or
     "auditor" not in st.session_state or not st.session_state.auditor or
     "puesto" not in st.session_state or not st.session_state.puesto
 ):
-    st.warning("Faltan datos del auditor o del puesto para comenzar.")
+    st.warning("❗️ No se encontró un registro válido. Por favor, ve a la página de inicio y registra un auditor y un archivo.")
     st.stop()
 
-# Verificar archivo y permitir carga si falta
-if "archivo" not in st.session_state or st.session_state.archivo is None:
-    st.warning("Falta subir el archivo de inventario.")
-    st.session_state.archivo = st.file_uploader(
-        "📁 Sube archivo de inventario (.csv)", 
-        type=["csv"]
-    )
-    # Verificar si ya se cargó durante esta interacción
-    if st.session_state.archivo is None:
-        st.stop()
+# Usar copia del DataFrame cargado en Home
+df = st.session_state.df_original.copy()
 
-# Ya tenemos archivo: cargarlo
-archivo = st.session_state.archivo
-
-# Leer unos bytes del archivo para detectar la codificación
-raw_data = archivo.getvalue()
-result = chardet.detect(raw_data)
-encoding_detected = result['encoding']
-
-# Leer el CSV con la codificación detectada
-df = pd.read_csv(io.StringIO(raw_data.decode(encoding_detected)))
+# Opcional: mostrar datos del auditor y archivo
+st.markdown(f"### Auditor: **{st.session_state.auditor}** — Puesto: **{st.session_state.puesto}**")
+#st.markdown("### 📦 Inventario cargado")
+#st.dataframe(df.head())
 
 # Cambiamos nombres de columnas
 if df is not None:
