@@ -134,12 +134,15 @@ def captura_sobrantes():
                 codigo_sobrante = st.text_input("Código de barras*")
                 producto_sobrante = st.text_input("Producto*")
             with col2:
+                lote_en = st.text_input("Lote")
                 unidades_sobrante = st.number_input("Unidades encontradas", min_value=1, step=1)
+            
 
             submitted = st.form_submit_button("Agregar sobrante")
             if submitted and codigo_sobrante and producto_sobrante:
                 st.session_state["sobrantes"].append({
                     "codigo de barras": codigo_sobrante,
+                    "lote": lote_en,
                     "producto": producto_sobrante,
                     "unidades encontradas": unidades_sobrante
                 })
@@ -151,12 +154,14 @@ def captura_sobrantes():
             sobrantes_df = pd.DataFrame(st.session_state["sobrantes"])
             st.dataframe(sobrantes_df, use_container_width=True)
 
+            fecha_sob = datetime.now().strftime("%Y-%m-%d")
+
             # Generar botón de descarga
             csv_sobrantes = sobrantes_df.to_csv(index=False).encode("utf-8")
             st.download_button(
                 label="⬇️ Descargar productos sobrantes",
                 data=csv_sobrantes,
-                file_name="productos_sobrantes.csv",
+                file_name=f"productos_sobrantes_{fecha_sob}.csv",
                 mime="text/csv",
                 key="csv_sobrantes"
             )

@@ -2,8 +2,9 @@ import streamlit as st
 import pandas as pd
 from componentes import mostrar_sidebar
 import os
+from pathlib import Path
 
-img_path = os.path.join(os.path.dirname(__file__), "asstes", "Ally_logo_mayo_2025.png")
+img_path = Path(__file__).parent / "assets" / "Ally_logo_mayo_2025.png"
 # Configuración de página y encabezado
 st.set_page_config(page_title="Inventarios Ally", layout="wide")
 col_logo, col_title = st.columns([1, 6])

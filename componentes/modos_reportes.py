@@ -5,9 +5,10 @@ import tempfile
 import os
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
+from pathlib import Path
 
 
-img_path = os.path.join(os.path.dirname(__file__), "asstes", "Ally_logo_mayo_2025.png")
+img_path = Path(__file__).parents[1] / "assets" / "Ally_logo_mayo_2025.png"
 fecha_formateada = datetime.now().strftime("%d%m%Y")
 
 def generar_csv_reporte(df_final, auditor, modo):
@@ -120,6 +121,7 @@ def generar_pdf(df, auditor, puesto, sucursal, modo):
         try:
             c.drawImage(img_path, width - 120, height - 100, width=80, preserveAspectRatio=True) #CAMBIAR UBICACION
         except:
+            #c.setFont("Helvetica-Bold", 18)
             pass
 
         c.setFont("Helvetica", 10)
@@ -132,14 +134,14 @@ def generar_pdf(df, auditor, puesto, sucursal, modo):
         c.drawString(40, height - 115, "Productos con faltantes:")
 
         c.setFont("Helvetica", 10)
-        c.drawString(40, height - 130, "Producto | Código de barras | Piezas Faltantes")
+        c.drawString(40, height - 130, "Código de barras | Lote | Producto | Piezas Faltantes / Excedentes")
 
         y = height - 150
         for idx, row in faltantes.iterrows():
             if y < 100:
                 c.showPage()
                 y = height - 80
-            c.drawString(50, y, f"- {row['nombre']} | {row['barcode']} | Faltan: {int(row['diferencia'])}")
+            c.drawString(50, y, f"- {row['barcode']} | {row['lote']} | {row['nombre']} | Faltan: {int(row['diferencia'])}")
             y -= 15
 
         y -= 15
@@ -157,7 +159,7 @@ def generar_pdf(df, auditor, puesto, sucursal, modo):
             if y < 100:
                 c.showPage()
                 y = height - 80
-            c.drawString(50, y, f"- {row['nombre']} | {row['barcode']} | Excedente: {int(row['diferencia'])}")
+            c.drawString(50, y, f"- {row['barcode']} | {row['lote']} | {row['nombre']} | Excedente: {int(row['diferencia'])}")
             y -= 15
 
         y -= 15

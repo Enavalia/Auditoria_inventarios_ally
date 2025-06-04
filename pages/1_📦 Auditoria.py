@@ -4,6 +4,7 @@ from datetime import datetime
 import os
 import io
 import chardet
+from pathlib import Path
 from componentes import (
     modo_ciego,
     modo_general,
@@ -23,7 +24,7 @@ from componentes import (
 with st.sidebar:
     mostrar_sidebar()
 
-img_path = os.path.join(os.path.dirname(__file__), "asstes", "Ally_logo_mayo_2025.png")
+img_path = Path(__file__).parents[1] / "assets" / "Ally_logo_mayo_2025.png"
 
 # Configuración de página y encabezado
 #col_logo, col_title = st.columns([1, 6])
@@ -172,10 +173,14 @@ else:
 
     # GENERAL
     elif modo == "General":
-        if "inventario-general_df" not in st.session_state:
-            modo_general(df, st.session_state.auditor, st.session_state.puesto, almacen, session_key="inventario-general_df")
-        mostrar_avance_general(st.session_state["inventario-general_df"])
+        # Mostrar buscador y capturar
+        modo_general(df, st.session_state.auditor, st.session_state.puesto, almacen, session_key="inventario-general_df")
 
+        # Mostrar avance
+        if "inventario-general_df" in st.session_state:
+            mostrar_avance_general(st.session_state["inventario-general_df"])
+
+        # Sobrantes
         if "sobrantes" not in st.session_state:
             st.session_state["sobrantes"] = []
         captura_sobrantes()
@@ -183,15 +188,15 @@ else:
 
     # CÍCLICO
     elif modo == "Cíclico":
-        if "inventario-ciclico_df" not in st.session_state:
-            modo_ciclico(df, almacen, session_key="inventario-ciclico_df")
+        modo_ciclico(df, almacen, session_key="inventario-ciclico_df")
 
         if "sobrantes" not in st.session_state:
             st.session_state["sobrantes"] = []
 
-        mostrar_avance_ciclico(st.session_state["inventario-ciclico_df"])
+        if "inventario-ciclico_df" in st.session_state:
+            mostrar_avance_ciclico(st.session_state["inventario-ciclico_df"])
         captura_sobrantes()
-        
+            
 
 
 
