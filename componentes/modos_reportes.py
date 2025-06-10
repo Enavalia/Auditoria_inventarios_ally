@@ -61,7 +61,8 @@ def generar_csv_ciclico(df_ciclico):
         st.warning("⚠️ No hay datos cíclicos para exportar.")
         return
 
-    df_ciclico = df_ciclico[df_ciclico["cantidad_fisica"].notna() & (df_ciclico["cantidad_fisica"] > 0)]
+    #df_ciclico = df_ciclico[df_ciclico["cantidad_fisica"].notna() & (df_ciclico["cantidad_fisica"] > 0)]
+    df_ciclico = df_ciclico[df_ciclico["cantidad_fisica"].notna()]
 
     if df_ciclico.empty:
         st.warning("⚠️ No se registraron cantidades físicas mayores a 0.")
@@ -77,7 +78,8 @@ def generar_csv_ciclico(df_ciclico):
     df_grouped = df_ciclico.groupby("barcode", as_index=False).agg({
         "nombre": "first",
         "cantidad_fisica": "sum",
-        "cantidad_sistema": "sum"
+        "cantidad_sistema": "sum",
+        "Auditado": "first"
     })
 
     # Agregar columnas adicionales

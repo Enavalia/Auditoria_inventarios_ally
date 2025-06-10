@@ -35,6 +35,8 @@ def modo_ciego(auditor):
 def modo_general(df, auditor, puesto, almacen, session_key="inventario-general_df"):
     df = df[df["almacen"] == almacen].copy()
     df["cantidad_fisica"] = pd.NA
+    df["Auditado"] = pd.NA
+
 
     if session_key not in st.session_state:
         st.session_state[session_key] = df
@@ -68,17 +70,22 @@ def modo_general(df, auditor, puesto, almacen, session_key="inventario-general_d
                             min_value=0, step=1,
                             key=f"cantidad_general_{idx}"
                         )
-                        # Botón alternativo para registrar cero
                     if col7.button("Sin existencias", key=f"btn_sin_{idx}"):
                         st.session_state[session_key].at[idx, "cantidad_fisica"] = 0
+                        st.session_state[session_key].at[idx, "Auditado"] = "auditado"
                         st.rerun()
-                        
+
+                    # Si introduce una cantidad manualmente
+                    if cantidad_fisica is not None and cantidad_fisica != "":
                         st.session_state[session_key].at[idx, "cantidad_fisica"] = cantidad_fisica
+                        st.session_state[session_key].at[idx, "Auditado"] = "auditado"
+
 
 
 def modo_ciclico(df, almacen, session_key="inventario-ciclico_df"):
     df = df[df["almacen"] == almacen].copy()
     df["cantidad_fisica"] = pd.NA
+    df["Auditado"] = pd.NA
 
     if session_key not in st.session_state:
         st.session_state[session_key] = df
@@ -110,9 +117,10 @@ def modo_ciclico(df, almacen, session_key="inventario-ciclico_df"):
 
             for idx, row in grouped.iterrows():
                 with st.container():
-                    col1, col2, col3 = st.columns(3)
+                    col1, col2, col3, col4 = st.columns(4)
                     col1.markdown(f"**🧾 Nombre:** {row['nombre']}")
                     col2.markdown(f"**📦 Cant. Sistema total:** {row['cantidad_sistema']}")
+
                     with col3:
                         cantidad = st.number_input(
                             f"Cantidad física total para código {row['barcode']}",
@@ -120,16 +128,20 @@ def modo_ciclico(df, almacen, session_key="inventario-ciclico_df"):
                             step=1,
                             key=f"cantidad_ciclica_{idx}"
                         )
-                        # Botón alternativo para registrar cero
-                    # if col4.button("Sin existencias", key=f"btn_sin_{idx}"):
-                    #     st.session_state[session_key].at[idx, "cantidad_fisica"] = 0
-                    #     st.rerun()
-                        
 
-                    # Distribuir proporcionalmente entre todas las filas con ese barcode
-                    indices = df[df["barcode"] == row["barcode"]].index
-                    for i in indices:
-                        st.session_state[session_key].at[i, "cantidad_fisica"] = cantidad / len(indices)
+                    if col4.button("Sin existencias", key=f"btn_sin_{idx}"):
+                        indices = df[df["barcode"] == row["barcode"]].index
+                        for i in indices:
+                            st.session_state[session_key].at[i, "cantidad_fisica"] = 0
+                            st.session_state[session_key].at[i, "Auditado"] = "auditado"
+                        st.rerun()
+
+                    # Si se introduce cantidad manualmente
+                    if cantidad is not None and cantidad != "":
+                        indices = df[df["barcode"] == row["barcode"]].index
+                        for i in indices:
+                            st.session_state[session_key].at[i, "cantidad_fisica"] = cantidad / len(indices)
+                            st.session_state[session_key].at[i, "Auditado"] = "auditado"
 
 
 
