@@ -56,7 +56,7 @@ def modo_general(df, auditor, puesto, almacen, session_key="inventario-general_d
             st.markdown(f"### 📋 Resultados para código: `{search_input}`")
             for idx, row in filtered_df.iterrows():
                 with st.container():
-                    col1, col2, col3, col4, col5, col6 = st.columns(6)
+                    col1, col2, col3, col4, col5, col6, col7 = st.columns(7)
                     col1.markdown(f"**🧾 Nombre:** {row['nombre']}")
                     col2.markdown(f"**🏷️ Código:** {row['barcode']}")
                     col3.markdown(f"**🔢 Lote:** {row['lote']}")
@@ -68,6 +68,11 @@ def modo_general(df, auditor, puesto, almacen, session_key="inventario-general_d
                             min_value=0, step=1,
                             key=f"cantidad_general_{idx}"
                         )
+                        # Botón alternativo para registrar cero
+                    if col7.button("Sin existencias", key=f"btn_sin_{idx}"):
+                        st.session_state[session_key].at[idx, "cantidad_fisica"] = 0
+                        st.rerun()
+                        
                         st.session_state[session_key].at[idx, "cantidad_fisica"] = cantidad_fisica
 
 
@@ -115,6 +120,11 @@ def modo_ciclico(df, almacen, session_key="inventario-ciclico_df"):
                             step=1,
                             key=f"cantidad_ciclica_{idx}"
                         )
+                        # Botón alternativo para registrar cero
+                    # if col4.button("Sin existencias", key=f"btn_sin_{idx}"):
+                    #     st.session_state[session_key].at[idx, "cantidad_fisica"] = 0
+                    #     st.rerun()
+                        
 
                     # Distribuir proporcionalmente entre todas las filas con ese barcode
                     indices = df[df["barcode"] == row["barcode"]].index
@@ -149,22 +159,22 @@ def captura_sobrantes():
                 st.success("✅ Producto sobrante agregado")
                 st.rerun()
 
-        if st.session_state["sobrantes"]:
-            st.markdown("### 📋 Productos sobrantes registrados")
-            sobrantes_df = pd.DataFrame(st.session_state["sobrantes"])
-            st.dataframe(sobrantes_df, use_container_width=True)
+        # if st.session_state["sobrantes"]:
+        #     st.markdown("### 📋 Productos sobrantes registrados")
+        #     sobrantes_df = pd.DataFrame(st.session_state["sobrantes"])
+        #     st.dataframe(sobrantes_df, use_container_width=True)
 
-            fecha_sob = datetime.now().strftime("%Y-%m-%d")
+        #     fecha_sob = datetime.now().strftime("%Y-%m-%d")
 
-            # Generar botón de descarga
-            csv_sobrantes = sobrantes_df.to_csv(index=False).encode("utf-8")
-            st.download_button(
-                label="⬇️ Descargar productos sobrantes",
-                data=csv_sobrantes,
-                file_name=f"productos_sobrantes_{fecha_sob}.csv",
-                mime="text/csv",
-                key="csv_sobrantes"
-            )
+        #     # Generar botón de descarga
+        #     csv_sobrantes = sobrantes_df.to_csv(index=False).encode("utf-8")
+        #     st.download_button(
+        #         label="⬇️ Descargar productos sobrantes",
+        #         data=csv_sobrantes,
+        #         file_name=f"productos_sobrantes_{fecha_sob}.csv",
+        #         mime="text/csv",
+        #         key="csv_sobrantes"
+        #     )
 
 
 def mostrar_avance_general(df: pd.DataFrame):

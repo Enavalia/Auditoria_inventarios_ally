@@ -112,13 +112,29 @@ with col3:
                 st.rerun()
     else:
         st.markdown("#### 🧾 Generar y descargar:")
-        col_csv, col_pdf = st.columns(2)
+        col_csv, col_pdf, col_sob = st.columns(3)
 
         with col_csv:
             exportar = st.button("📤 CSV")
 
         with col_pdf:
             exportar_pdf = st.button("📄 PDF")
+
+        with col_sob:
+            # En otra parte de tu script o layout de la app:
+            if "sobrantes" in st.session_state and st.session_state["sobrantes"]:
+                
+                sobrantes_df = pd.DataFrame(st.session_state["sobrantes"])
+                fecha_sob = datetime.now().strftime("%Y-%m-%d")
+
+                csv_sobrantes = sobrantes_df.to_csv(index=False).encode("utf-8")
+                st.download_button(
+                    label="📤 CSV sobrantes",
+                    data=csv_sobrantes,
+                    file_name=f"productos_sobrantes_{fecha_sob}.csv",
+                    mime="text/csv",
+                    key="csv_sobrantes"
+    )
 
         # Lógica de CSV
         if exportar:

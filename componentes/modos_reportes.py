@@ -61,6 +61,13 @@ def generar_csv_ciclico(df_ciclico):
         st.warning("⚠️ No hay datos cíclicos para exportar.")
         return
 
+    df_ciclico = df_ciclico[df_ciclico["cantidad_fisica"].notna() & (df_ciclico["cantidad_fisica"] > 0)]
+
+    if df_ciclico.empty:
+        st.warning("⚠️ No se registraron cantidades físicas mayores a 0.")
+        return
+
+
     # Validar que exista el auditor y el almacén
     auditor = st.session_state.get("auditor", "Desconocido")
     almacen = df_ciclico["almacen"].iloc[0] if "almacen" in df_ciclico.columns else "N/A"
