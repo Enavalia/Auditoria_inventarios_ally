@@ -5,7 +5,8 @@ import tempfile
 import os
 from reportlab.lib.pagesizes import letter
 from reportlab.pdfgen import canvas
-from pathlib import Path
+from pathlib import Path 
+import numpy as np
 
 
 img_path = Path(__file__).parents[1] / "assets" / "Ally_logo_mayo_2025.png"
@@ -74,13 +75,23 @@ def generar_csv_ciclico(df_ciclico):
     almacen = df_ciclico["almacen"].iloc[0] if "almacen" in df_ciclico.columns else "N/A"
     fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-    # Agrupar por código
+    # # Agrupar por código
+    # df_grouped = df_ciclico.groupby("barcode", as_index=False).agg({
+    #     "nombre": "first",
+    #     "cantidad_fisica": "sum",
+    #     "cantidad_sistema": "sum",
+    #     "Auditado": "first"
+    # })
+
+    
+
     df_grouped = df_ciclico.groupby("barcode", as_index=False).agg({
         "nombre": "first",
-        "cantidad_fisica": "sum",
+        "cantidad_fisica": lambda x: int(np.rint(x.sum())),
         "cantidad_sistema": "sum",
         "Auditado": "first"
     })
+
 
     # Agregar columnas adicionales
     df_grouped["diferencia"] = df_grouped["cantidad_fisica"] - df_grouped["cantidad_sistema"]
