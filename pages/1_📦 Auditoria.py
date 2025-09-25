@@ -61,6 +61,7 @@ if df is not None:
                     "unidades iniciales": "stock_inicial",
                     "unidades disponibles": "cantidad_sistema",
                     "costo del lote": "costo",
+                    "costo unitario":"costo_1",
                     "fecha de expiracion": "caducidad",
                     "almacen": "almacen"
                 }, inplace=True)

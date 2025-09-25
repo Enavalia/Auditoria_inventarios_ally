@@ -89,8 +89,24 @@ def generar_csv_ciclico(df_ciclico):
         "nombre": "first",
         "cantidad_fisica": lambda x: int(np.rint(x.sum())),
         "cantidad_sistema": "sum",
-        "Auditado": "first"
+        "Auditado": "first",
+        "costo_1": ["max", "min", "mean", "sum"]
     })
+
+    # Aplanar columnas
+    df_grouped.columns = [
+        "_".join(col).strip("_") if isinstance(col, tuple) else col
+        for col in df_grouped.columns.values
+    ]
+
+    # Renombrar más claro
+    df_grouped = df_grouped.rename(columns={
+        "costo_1_max": "costo_max",
+        "costo_1_min": "costo_min",
+        "costo_1_mean": "costo_prom",
+        "costo_1_sum": "costo_total"
+    })
+
 
 
     # Agregar columnas adicionales
