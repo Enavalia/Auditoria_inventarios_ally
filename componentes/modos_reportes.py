@@ -85,27 +85,41 @@ def generar_csv_ciclico(df_ciclico):
 
     
 
-    df_grouped = df_ciclico.groupby("barcode", as_index=False).agg({
-        "nombre": "first",
-        "cantidad_fisica": lambda x: int(np.rint(x.sum())),
-        "cantidad_sistema": "sum",
-        "Auditado": "first",
-        "costo_1": ["max", "min", "mean", "sum"]
-    })
+    # df_grouped = df_ciclico.groupby("barcode", as_index=False).agg({
+    #     "nombre": "first",
+    #     "cantidad_fisica": lambda x: int(np.rint(x.sum())),
+    #     "cantidad_sistema": "sum",
+    #     "Auditado": "first",
+    #     "costo_1": ["max", "min", "mean", "sum"]
+    # })
 
-    # Aplanar columnas
-    df_grouped.columns = [
-        "_".join(col).strip("_") if isinstance(col, tuple) else col
-        for col in df_grouped.columns.values
-    ]
+    # # Aplanar columnas
+    # df_grouped.columns = [
+    #     "_".join(col).strip("_") if isinstance(col, tuple) else col
+    #     for col in df_grouped.columns.values
+    # ]
 
-    # Renombrar más claro
-    df_grouped = df_grouped.rename(columns={
-        "costo_1_max": "costo_max",
-        "costo_1_min": "costo_min",
-        "costo_1_mean": "costo_prom",
-        "costo_1_sum": "costo_total"
-    })
+    # # Renombrar más claro
+    # df_grouped = df_grouped.rename(columns={
+    #     "costo_1_max": "costo_max",
+    #     "costo_1_min": "costo_min",
+    #     "costo_1_mean": "costo_prom",
+    #     "costo_1_sum": "costo_total"
+    # })
+
+    df_grouped = df_ciclico.groupby("barcode", as_index=False).agg(
+    nombre=("nombre", "first"),
+    cantidad_fisica=("cantidad_fisica", lambda x: int(np.rint(x.sum()))),
+    cantidad_sistema=("cantidad_sistema", "sum"),
+    Auditado=("Auditado", "first"),
+    costo_max=("costo_1", "max"),
+    costo_min=("costo_1", "min"),
+    costo_prom=("costo_1", "mean"),
+    costo_total=("costo_1", "sum"),
+    )
+
+    # Redondear promedio
+    df_grouped["costo_prom"] = df_grouped["costo_prom"].round(2)
 
 
 
