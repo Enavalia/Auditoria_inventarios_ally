@@ -112,6 +112,7 @@ def generar_csv_ciclico(df_ciclico):
     cantidad_fisica=("cantidad_fisica", lambda x: int(np.rint(x.sum()))),
     cantidad_sistema=("cantidad_sistema", "sum"),
     Auditado=("Auditado", "first"),
+    costo=("costo_1", "first"),
     costo_max=("costo_1", "max"),
     costo_min=("costo_1", "min"),
     costo_prom=("costo_1", "mean"),
