@@ -12,8 +12,11 @@ with col_logo:
     st.image(img_path, width=80)
 with col_title:
     st.title("Inventarios Ally")
-st.text("V.Beta.0.2 -- Junio 2025")
+st.text("V.Beta.0.3 -- Noviembre 2025")
 
+# --- Botón para ir a otra página del mismo app ---
+if st.button("📊 Ir a visualización de inventarios"):
+    st.switch_page("pages\4_Inventario por lote.py")
 
 if "registro_completado" not in st.session_state:
     st.session_state.registro_completado = False
