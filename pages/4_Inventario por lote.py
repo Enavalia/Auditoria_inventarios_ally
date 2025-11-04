@@ -40,16 +40,16 @@ if archivo is not None:
             if col not in df.columns:
                 df[col] = ""
          #--- Normalización profunda de columnas clave ---
-            for col in ["barcode", "lote", "desc_corta", "nombre"]:
-                if col in df.columns:
-                    df[col] = (
-                        df[col]
-                        .astype(str)
-                        .apply(lambda x: unicodedata.normalize("NFKC", x))  # normaliza Unicode
-                        .str.replace(r"\s+", " ", regex=True)               # colapsa espacios múltiples
-                        .str.strip()                                        # elimina espacios al inicio/final
-                        .str.upper()                                        # homogeneiza mayúsculas
-                    )
+        for col in ["barcode", "lote", "desc_corta", "nombre"]:
+            if col in df.columns:
+                df[col] = (
+                    df[col]
+                    .astype(str)
+                    .apply(lambda x: unicodedata.normalize("NFKC", x))  # normaliza Unicode
+                    .str.replace(r"\s+", " ", regex=True)               # colapsa espacios múltiples
+                    .str.strip()                                        # elimina espacios al inicio/final
+                    .str.upper()                                        # homogeneiza mayúsculas
+                )
         # --- Agrupar por barcode y lote ---
         df_agrupado = (
             df.groupby(["barcode", "lote"], as_index=False)["cantidad_sistema"]
@@ -70,9 +70,16 @@ if archivo is not None:
                 | df["nombre"].astype(str).str.contains(term_lower, case=False, na=False)
             )
 
+            # resultados = (
+            #     df.loc[mask, ["barcode", "lote", "desc_corta", "nombre", "cantidad_sistema"]]
+            #     .drop_duplicates()
+            #     .sort_values(by=["barcode", "lote"])
+            # )
+
             resultados = (
                 df.loc[mask, ["barcode", "lote", "desc_corta", "nombre", "cantidad_sistema"]]
-                .drop_duplicates()
+                .groupby(["barcode", "lote", "desc_corta", "nombre"], as_index=False)
+                .sum()
                 .sort_values(by=["barcode", "lote"])
             )
 
